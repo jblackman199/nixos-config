@@ -145,7 +145,7 @@
   nix.gc = { # Collect garbage weekly
     automatic = true;
     dates = "weekly";
-    options = "--delete-older-than 30d";
+    options = "--delete-older-than 14d";
   };
 
   nix.optimise.automatic = true; # Automatically optimize /nix/store weekly
@@ -208,6 +208,7 @@
     fastfetch
     fish
     fwupd
+    git
     hunspell
     hunspellDicts.en_US
     hyphen
