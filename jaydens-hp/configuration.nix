@@ -9,19 +9,33 @@
     (import <nix-snapd>).nixosModules.default # Install nix-snapd using the flake at /home/jblackman199/flake.nix
   ];
 
-  boot.loader = { # Enable bootloader as Grub
-  efi = {
-    canTouchEfiVariables = true;
-  };
-  grub = {
-    enable = true;
-    efiSupport = true;
-    device = "nodev";
-    useOSProber = true;
+  boot = { # Enable bootloader as Grub
+    initrd.verbose = false;
+    consoleLogLevel = 0;
+    kernelParams = ["quiet" "udev.log_level=3"];
+    loader.efi = {
+      canTouchEfiVariables = true;
+    };
+    loader.grub = {
+      enable = true;
+      efiSupport = true;
+      device = "nodev";
+      useOSProber = true;
+      theme = pkgs.stdenv.mkDerivation {
+        pname = "distro-grub-themes";
+        version = "3.1";
+        src = pkgs.fetchFromGitHub {
+          owner = "AdisonCavani";
+          repo = "distro-grub-themes";
+          rev = "v3.1";
+          hash = "sha256-ZcoGbbOMDDwjLhsvs77C7G7vINQnprdfI37a9ccrmPs=";
+        };
+        installPhase = "cp -r customize/nixos $out";
+      };
     };
   };
 
-  # boot.kernelPackages = pkgs.linuxPackages_latest; # Install the latest kernel
+  boot.kernelPackages = pkgs.linuxPackages_latest; # Install the latest kernel
 
   boot.binfmt.registrations.appimage = { # Make AppImages work
     wrapInterpreterInShell = false;
@@ -47,15 +61,9 @@
     #jack.enable = true;  If you want to use JACK applications, uncomment this
   };
 
-  hardware.opengl = { # Enable OpenGL
-    enable = true;
-  };
+  hardware.graphics.enable = true; # Enable OpenGL
 
-  services.xserver.videoDrivers = ["nvidia"]; # Load nvidia driver for Xorg and Wayland
-
-  time.hardwareClockInLocalTime = true; # Make the time not suck in Windows
-
-  networking.hostName = "jaydens-hp"; # Define your hostname.
+  networking.hostName = "jaydens-nix"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # networking.proxy.default = "http://user:password@proxy:port/";  # Configure network proxy if necessary
@@ -105,7 +113,7 @@
   nix.gc = { # Collect garbage weekly
     automatic = true;
     dates = "weekly";
-    options = "--delete-older-than 5d";
+    options = "--delete-older-than 7d";
   };
 
   nix.optimise.automatic = true; # Automatically optimize /nix/store weekly
@@ -124,9 +132,11 @@
   services.displayManager.sddm.wayland.enable = true; # Set SDDM to Wayland
   services.displayManager.sddm.autoNumlock = true;  # Enable numlock on SDDM
   environment.plasma6.excludePackages = with pkgs.kdePackages; [  # Exclude listed packages
-    oxygen
+    breeze-grub
     elisa
     khelpcenter
+    krdp
+    oxygen
   ];
 
   environment.sessionVariables.NIXOS_OZONE_WL = "1"; # for electron wayland
@@ -147,9 +157,6 @@
 
   services.tailscale.enable = true; # Install and enable tailscale
 
-  virtualisation.libvirtd.enable = true; # Install and enable libvirt
-  programs.virt-manager.enable = true; # Install and enable virt-manager
-
   # services.openssh.enable = true; # Enable the OpenSSH daemon.
 
   # services.xserver.libinput.enable = true;  # Enable touchpad support (enabled default in most desktopManager).
@@ -163,7 +170,6 @@
     fastfetch
     fish
     fwupd
-    git
     hunspell
     hunspellDicts.en_US
     hyphen
@@ -186,18 +192,17 @@
     kdePackages.sonnet
     kdePackages.svgpart
     libreoffice-qt6-fresh
+    lshw
     mythes
-    onedrive
-    onedrivegui
     qalculate-gtk
     qbittorrent
     ramfetch
+    rclone
     rnote
     sage
     signal-desktop
-    thunderbird-128
+    thunderbird
     tlp
-    ventoy
     vlc
     xdg-desktop-portal-gtk
     xournalpp
@@ -205,12 +210,15 @@
   ];
 
   fonts.packages = with pkgs; [ # List fonts installed
+    liberation_ttf
+    libertine
     noto-fonts
     noto-fonts-cjk-sans
     noto-fonts-cjk-serif
     noto-fonts-color-emoji
-    liberation_ttf
-    libertine
+    noto-fonts-lgc-plus
+    noto-fonts-monochrome-emoji
+    unicode-emoji
   ];
 
   networking.firewall = { # Open ports for KDE Connect
