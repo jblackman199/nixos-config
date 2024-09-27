@@ -194,8 +194,6 @@
 
   services.open-webui.enable = true; # Enable Open-WebUI
 
-  services.onedrive.enable = true; # Enable OneDrive
-
   virtualisation.libvirtd.enable = true; # Install and enable libvirt
   programs.virt-manager.enable = true; # Install and enable virt-manager
 
@@ -239,7 +237,6 @@
     lshw
     mythes
     ollama
-    onedrivegui
     qalculate-gtk
     qbittorrent
     ramfetch
