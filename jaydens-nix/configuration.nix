@@ -35,7 +35,7 @@
     };
   };
 
-  # boot.kernelPackages = pkgs.linuxPackages_latest; # Install the latest kernel
+  boot.kernelPackages = pkgs.linuxPackages_latest; # Install the latest kernel
 
   boot.binfmt.registrations.appimage = { # Make AppImages work
     wrapInterpreterInShell = false;
@@ -61,9 +61,7 @@
     #jack.enable = true;  If you want to use JACK applications, uncomment this
   };
 
-  hardware.opengl = { # Enable OpenGL
-    enable = true;
-  };
+  hardware.graphics.enable = true; # Enable OpenGL
 
   services.xserver.videoDrivers = ["nvidia"]; # Load nvidia driver for Xorg and Wayland
 
@@ -150,7 +148,7 @@
   nix.gc = { # Collect garbage weekly
     automatic = true;
     dates = "weekly";
-    options = "--delete-older-than 5d";
+    options = "--delete-older-than 7d";
   };
 
   nix.optimise.automatic = true; # Automatically optimize /nix/store weekly
@@ -172,6 +170,7 @@
     breeze-grub
     elisa
     khelpcenter
+    krdp
     oxygen
   ];
 
@@ -194,6 +193,8 @@
   services.tailscale.enable = true; # Install and enable tailscale
 
   services.open-webui.enable = true; # Enable Open-WebUI
+
+  services.onedrive.enable = true; # Enable OneDrive
 
   virtualisation.libvirtd.enable = true; # Install and enable libvirt
   programs.virt-manager.enable = true; # Install and enable virt-manager
@@ -238,11 +239,11 @@
     lshw
     mythes
     ollama
-    onedrive
     onedrivegui
     qalculate-gtk
     qbittorrent
     ramfetch
+    rclone
     rnote
     rssguard
     sage
